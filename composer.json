@@ -1,0 +1,29 @@
+{
+    "name": "timjuly/laravel",
+    "require": {
+        "guzzlehttp/guzzle": "~6.3",
+        "qiniu/php-sdk": "~7.2",
+        "ramsey/uuid": "~3.8"
+    },
+    "autoload": {
+        "files": [
+            "src/ThirtyThree/Support/helpers.php"
+        ],
+        "psr-4": {
+            "ThirtyThree\\": "src/ThirtyThree/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "aliases": {
+                "Qiniu": "ThirtyThree\\Support\\Facades\\Qiniu",
+                "TimStorage": "ThirtyThree\\Support\\Facades\\Storage"
+            },
+            "providers": [
+                "ThirtyThree\\Qiniu\\QiniuServiceProvider",
+                "ThirtyThree\\Storage\\StorageServiceProvider",
+                "ThirtyThree\\Context\\ContextServiceProvider"
+            ]
+        }
+    }
+}
