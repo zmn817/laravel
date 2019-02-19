@@ -1,6 +1,6 @@
 <?php
 
-namespace ThirtyThree\Qcloud\Aai;
+namespace ThirtyThree\Dingtalk;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
