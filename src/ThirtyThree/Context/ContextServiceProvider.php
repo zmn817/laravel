@@ -3,7 +3,6 @@
 namespace ThirtyThree\Context;
 
 use Illuminate\Http\Request;
-use Thirtythree\Context\Context;
 use Illuminate\Support\ServiceProvider;
 
 class ContextServiceProvider extends ServiceProvider
