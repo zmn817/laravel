@@ -1,8 +1,8 @@
 <?php
 
-namespace ThirtyThree\Logging;
+namespace ThirtyThree\Context;
 
-class ContextIdFormatter
+class LoggingFormatter
 {
     /**
      * 为日志添加上下文ID.
