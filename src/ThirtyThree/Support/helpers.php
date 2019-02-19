@@ -1,5 +1,6 @@
 <?php
-if (!function_exists('fileLogger')) {
+
+if (! function_exists('fileLogger')) {
     /**
      * 日志文件.
      *
@@ -24,7 +25,7 @@ if (!function_exists('fileLogger')) {
     }
 }
 
-if (!function_exists('attachSuffix')) {
+if (! function_exists('attachSuffix')) {
     /**
      * 文件后缀
      *
@@ -43,7 +44,7 @@ if (!function_exists('attachSuffix')) {
     }
 }
 
-if (!function_exists('attachName')) {
+if (! function_exists('attachName')) {
     /**
      * 文件名称.
      *
@@ -62,7 +63,7 @@ if (!function_exists('attachName')) {
     }
 }
 
-if (!function_exists('validateUrl')) {
+if (! function_exists('validateUrl')) {
     /**
      * 验证 Url 是否合法.
      *
