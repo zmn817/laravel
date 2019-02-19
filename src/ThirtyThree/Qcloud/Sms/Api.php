@@ -5,7 +5,7 @@ namespace ThirtyThree\Qcloud\Sms;
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
 use InvalidArgumentException;
-use TimJuly\Exceptions\ApiException;
+use ThirtyThree\Exceptions\ApiException;
 use GuzzleHttp\Exception\BadResponseException;
 
 class Api

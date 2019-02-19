@@ -2,9 +2,9 @@
 
 namespace ThirtyThree\Amap;
 
-use TimJuly\Request\Request;
 use GuzzleHttp\Psr7\Response;
-use TimJuly\Exceptions\ApiException;
+use ThirtyThree\Request\Request;
+use ThirtyThree\Exceptions\ApiException;
 
 class Amap extends Request
 {

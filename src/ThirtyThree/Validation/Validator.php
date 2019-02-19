@@ -4,7 +4,7 @@ namespace ThirtyThree\Validation;
 
 use Cache;
 use Illuminate\Http\Request;
-use TimJuly\Geetest\Geetest;
+use ThirtyThree\Geetest\Geetest;
 
 class Validator
 {

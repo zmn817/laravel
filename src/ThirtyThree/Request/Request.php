@@ -5,7 +5,7 @@ namespace ThirtyThree\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\TransferStats;
-use TimJuly\Exceptions\ApiException;
+use ThirtyThree\Exceptions\ApiException;
 use GuzzleHttp\Exception\BadResponseException;
 
 class Request

@@ -3,7 +3,7 @@
 namespace ThirtyThree\SocialiteProviders\Dingtalk;
 
 use RuntimeException;
-use TimJuly\Dingtalk\AccessToken;
+use ThirtyThree\Dingtalk\AccessToken;
 use SocialiteProviders\Manager\OAuth2\User;
 use Laravel\Socialite\Two\ProviderInterface;
 use SocialiteProviders\Manager\OAuth2\AbstractProvider;

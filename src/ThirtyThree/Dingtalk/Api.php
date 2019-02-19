@@ -1,74 +1,72 @@
 <?php
 
-namespace ThirtyThree\Dingtalk;
+namespace ThirtyThree\Qcloud\Aai;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
-use TimJuly\Exceptions\ApiException;
+use ThirtyThree\Exceptions\ApiException;
 use GuzzleHttp\Exception\BadResponseException;
 
 class Api
 {
     protected $logger;
-    protected $apiBasePath;
+
+    protected $apiBasePath = 'https://aai.qcloud.com/';
+    protected $appID;
+    protected $secretID;
+    protected $secretKey;
 
     public function __construct()
     {
-        $this->logger = fileLogger('dingtalk', 'api');
-        $this->apiBasePath = 'https://oapi.dingtalk.com/';
+        $this->logger = fileLogger('qcloud/aai/', 'api');
+        $this->appID = config('qcloud.aai.app_id');
+        $this->secretID = config('qcloud.aai.secret_id');
+        $this->secretKey = config('qcloud.aai.secret_key');
     }
 
-    public function token($id, $secret)
+    public function asr($url)
     {
         $params = [
-            'corpid' => $id,
-            'corpsecret' => $secret,
+            'sub_service_type' => 0,
+            'engine_model_type' => '8k_0',
+            'callback_url' => apiRoute('qcloud.aai.callback'),
+            'res_text_format' => 0,
+            'source_type' => 0,
+            'res_type' => 1,
+            'url' => $url,
+            'timestamp' => time(),
+            'expired' => time() + 86400,
+            'nonce' => rand(),
         ];
 
-        return $this->send('GET', 'gettoken', $params);
+        return $this->send('POST', 'asr/v1', $params);
     }
 
-    public function snsToken($id, $secret)
+    protected function send($method, $path, $params = [], $body = null)
     {
-        $params = [
-            'appid' => $id,
-            'appsecret' => $secret,
-        ];
-
-        return $this->send('GET', 'sns/gettoken', $params);
-    }
-
-    public function getUseridByUnionid($unionid)
-    {
-        $params = [
-            'access_token' => AccessToken::token(),
-            'unionid' => $unionid,
-        ];
-
-        return $this->send('GET', 'user/getUseridByUnionid', $params);
-    }
-
-    protected function send($method, $path, $body = [])
-    {
-        $uri = $this->apiBasePath.$path;
+        $uri = $this->apiBasePath.$path.'/'.$this->appID;
+        $signature = $this->signature($method, $uri, $params);
+        $uri .= '?'.http_build_query($params);
 
         $transferTime = null;
         $client = new Client();
 
-        $r = $method == 'GET' ? 'query' : 'form_params';
         try {
-            $res = $client->request($method, $uri, [
-                $r => $body,
+            $response = $client->request($method, $uri, [
+                'headers' => [
+                    'Authorization' => $signature,
+                ],
+                'body' => $body,
                 'on_stats' => function (TransferStats $stats) use (&$transferTime) {
                     $transferTime = $stats->getTransferTime();
                 },
             ]);
 
-            $responseBody = $res->getBody();
+            $responseBody = $response->getBody();
             $json = json_decode($responseBody, true);
 
-            if (array_get($json, 'errcode') !== 0) {
-                $errorMessage = array_get($json, 'errmsg', '未知错误');
+            if (array_get($json, 'code') !== 0) {
+                $errorMessage = array_get($json, 'message', '未知错误');
                 $this->logger->error($errorMessage, [
                     'method' => $method,
                     'uri' => $uri,
@@ -77,9 +75,8 @@ class Api
                     'transferTime' => $transferTime,
                 ]);
 
-                throw new ApiException($errorMessage, 500, $json);
+                throw new ApiException($errorMessage, 500, $response);
             }
-
             $this->logger->info('call api', [
                 'method' => $method,
                 'uri' => $uri,
@@ -88,15 +85,21 @@ class Api
             ]);
 
             return $json;
+        } catch (ApiException $e) {
+            throw $e;
         } catch (BadResponseException $e) {
-            $response = $e->getResponse();
+            $response = null;
             $responseBody = null;
-            if (! empty($response)) {
-                $responseBody = $response->getBody();
-            }
-            $json = json_decode($responseBody, true);
+            $errorMessage = '未知错误';
 
-            $errorMessage = array_get($json, 'errmsg', '未知错误');
+            if ($e->hasResponse()) {
+                $response = $e->getResponse();
+                $responseBody = $response->getBody();
+                $json = json_decode($responseBody, true);
+
+                $errorMessage = array_get($json, 'message', '未知错误');
+            }
+
             $this->logger->error($errorMessage, [
                 'method' => $method,
                 'uri' => $uri,
@@ -105,9 +108,7 @@ class Api
                 'transferTime' => $transferTime,
             ]);
 
-            throw new ApiException($errorMessage, 500, $json);
-        } catch (ApiException $e) {
-            throw $e;
+            throw new ApiException($errorMessage, 500, $response);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(),
                 [
@@ -120,5 +121,21 @@ class Api
 
             throw new ApiException($e->getMessage());
         }
+    }
+
+    public function signature($method, $uri, &$params)
+    {
+        $uriInfo = parse_url($uri);
+        $params['secretid'] = $this->secretID;
+        ksort($params);
+        $param_str = '';
+        foreach ($params as $k => $v) {
+            $param_str = $param_str."$k=$v&";
+        }
+        $param_str = rtrim($param_str, '&');
+
+        $sig_str = strtoupper($method).$uriInfo['host'].$uriInfo['path'].'?'.$param_str;
+
+        return base64_encode(hash_hmac('sha1', $sig_str, $this->secretKey, true));
     }
 }

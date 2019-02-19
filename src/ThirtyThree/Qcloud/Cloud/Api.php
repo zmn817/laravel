@@ -4,7 +4,7 @@ namespace ThirtyThree\Qcloud\Cloud;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
-use TimJuly\Exceptions\ApiException;
+use ThirtyThree\Exceptions\ApiException;
 use GuzzleHttp\Exception\BadResponseException;
 
 class Api
