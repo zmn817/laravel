@@ -6,6 +6,7 @@
         "ramsey/uuid": "^3.8"
     },
     "require-dev": {
+        "doctrine/cache": "*",
         "filp/whoops": "*",
         "laravel/laravel": "*",
         "laravel/passport": "*",
