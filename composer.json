@@ -6,10 +6,11 @@
         "ramsey/uuid": "^3.8"
     },
     "require-dev": {
-        "filp/whoops": "^2.0",
+        "filp/whoops": "*",
         "laravel/laravel": "*",
         "laravel/passport": "*",
-        "mockery/mockery": "^1.0",
+        "laravel/socialite": "*",
+        "mockery/mockery": "*",
         "phpunit/phpunit": "^7.0"
     },
     "autoload": {
