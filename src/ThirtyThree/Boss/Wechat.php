@@ -7,13 +7,11 @@ use ThirtyThree\Request\Request;
 
 class Wechat extends Request
 {
-    protected $session;
-
-    public function __construct($session)
+    public function __construct($config = null)
     {
         $this->setLogger(fileLogger('boss', 'wechat-api'));
         $this->setBaseUri('https://wxapp.zhipin.com');
-        $this->session = $session;
+        $this->setConfig($config);
     }
 
     public function condition()
@@ -39,7 +37,7 @@ class Wechat extends Request
     protected function content($method, $uri, array $content, array $options)
     {
         return [$content, [
-            'session' => $this->session,
+            'session' => $this->config('session'),
             'User-Agent' => null,
         ]];
     }

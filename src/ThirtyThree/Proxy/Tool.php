@@ -31,7 +31,7 @@ class Tool
             throw new InvalidArgumentException('Only support http and https scheme.');
         }
 
-        $info = json_decode($this->requestGet('http://httpbin.org/get?show_env=1', $proxy), true);
+        $info = json_decode($this->requestGet('https://httpbin.org/get?show_env=1', $proxy), true);
 
         $type = '透明';
         if ($info['origin'] == $host) {

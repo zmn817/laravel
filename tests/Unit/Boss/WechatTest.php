@@ -2,19 +2,30 @@
 
 namespace ThirtyThree\Tests\Unit\Boss;
 
+use Illuminate\Support\Str;
 use ThirtyThree\Boss\Wechat;
 use ThirtyThree\Tests\TestCase;
 use ThirtyThree\Exceptions\RequestException;
 
 class WechatTest extends TestCase
 {
-    public function testWechatErrorSession()
+    public function testGetCondition()
+    {
+        $session = Str::random();
+        $wechat = new Wechat(['session' => $session]);
+        $condition = $wechat->condition();
+        $this->assertNotEmpty($condition);
+    }
+
+    public function testSearchJob()
     {
         $this->expectException(RequestException::class);
-        $wechat = new Wechat('xxxxxx');
+
+        $session = Str::random();
+        $wechat = new Wechat(['session' => $session]);
         $wechat->search([
-            'city' => 'xx',
-            'query' => 'xx',
+            'city' => 'Beijing',
+            'query' => 'Web',
             'page' => 1,
         ]);
     }
