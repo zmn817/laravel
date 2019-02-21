@@ -2,114 +2,50 @@
 
 namespace ThirtyThree\Lagou;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\TransferStats;
-use ThirtyThree\Exceptions\RequestException;
-use GuzzleHttp\Exception\BadResponseException;
+use GuzzleHttp\Psr7\Response;
+use ThirtyThree\Request\Request;
 
-class Wechat
+class Wechat extends Request
 {
-    protected $logger;
-    protected $apiBasePath;
-    protected $config;
-
-    public function __construct()
+    public function __construct($config = null)
     {
-        $this->logger = fileLogger('lagou', 'wechat-api');
-        $this->apiBasePath = 'https://weapp.lagou.com';
+        $this->setLogger(fileLogger('lagou', 'wechat-api'));
+        $this->setBaseUri('https://weapp.lagou.com');
     }
 
     public function jdDetail($id)
     {
-        return $this->send('GET', '/api/job/'.$id);
+        return $this->request('GET', '/api/job/'.$id);
     }
 
     public function company($id)
     {
-        return $this->send('GET', '/api/company/'.$id);
+        return $this->request('GET', '/api/company/'.$id);
     }
 
     public function search($search)
     {
-        return $this->send('POST', '/api/job/search', $search);
+        return $this->request('POST', '/api/job/search', $search);
     }
 
-    protected function send($method, $path, $body = null)
+    protected function content($method, $uri, array $content, array $options)
     {
-        $uri = $this->apiBasePath.$path;
-
-        $transferTime = null;
-        $client = new Client();
-
-        $headers = [
-            'Referer' => 'https://servicewechat.com/wx7523c9b73699af04/100/page-frame.html',
+        return [$content, [
+            'Referer' => 'https://servicewechat.com/wx7523c9b73699af04/188/page-frame.html',
             'User-Agent' => null,
-        ];
-        try {
-            $res = $client->request($method, $uri, [
-                'headers' => $headers,
-                'json' => $body,
-                'on_stats' => function (TransferStats $stats) use (&$transferTime) {
-                    $transferTime = $stats->getTransferTime();
-                },
-            ]);
+        ]];
+    }
 
-            $responseBody = (string) $res->getBody();
-            $responseStatus = $res->getStatusCode();
-            $json = json_decode($responseBody, true);
+    protected function response($method, $uri, array $content, array $options, Response $response)
+    {
+        $responseBody = (string) $response->getBody();
 
-            if (array_get($json, 'success') !== true) {
-                $this->logger->error('获取数据错误', [
-                    'method' => $method,
-                    'uri' => $uri,
-                    'body' => $body,
-                    'response' => (string) $responseBody,
-                    'response_status' => $responseStatus,
-                    'transferTime' => $transferTime,
-                ]);
+        $json = json_decode($responseBody, true);
 
-                throw new RequestException('获取数据错误');
-            }
-
-            return array_get($json, 'data');
-        } catch (RequestException $e) {
-            throw $e;
-        } catch (BadResponseException $e) {
-            $response = null;
-            $responseStatus = null;
-            $responseBody = null;
-            $errorMessage = '未知错误';
-
-            if ($e->hasResponse()) {
-                $response = $e->getResponse();
-                $responseStatus = $response->getStatusCode();
-                $responseBody = $response->getBody();
-                $json = json_decode($responseBody, true);
-
-                $errorMessage = array_get($json, 'error', '未知错误');
-            }
-
-            $this->logger->error($errorMessage, [
-                'method' => $method,
-                'uri' => $uri,
-                'body' => $body,
-                'response' => (string) $responseBody,
-                'response_status' => $responseStatus,
-                'transferTime' => $transferTime,
-            ]);
-
-            throw new RequestException($errorMessage, 500, $response);
-        } catch (\Exception $e) {
-            $this->logger->error($e->getMessage(),
-                [
-                    'method' => $method,
-                    'uri' => $uri,
-                    'body' => $body,
-                    'transferTime' => $transferTime,
-                ]
-            );
-
-            throw new RequestException($e->getMessage());
+        if (array_get($json, 'success') !== true) {
+            throw new \Exception(array_get($json, 'error', 'Unknown Error'));
         }
+
+        return array_get($json, 'data');
     }
 }

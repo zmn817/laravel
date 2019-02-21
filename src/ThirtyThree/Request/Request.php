@@ -69,7 +69,6 @@ class Request
 
         $contentType = $this->contentType($method, $uri, $content, $options);
         list($content, $headers) = $this->content($method, $uri, $content, $options);
-        $headers['X-Request-Id'] = app('context')->id(); // 上下文 ID
         try {
             $response = $client->request($method, $uri, [
                 'headers' => $headers,
@@ -162,7 +161,9 @@ class Request
 
     protected function content($method, $uri, array $content, array $options)
     {
-        return [$content, []];
+        return [$content, [
+            'X-Request-Id' => app('context')->id(),  // 上下文 ID
+        ]];
     }
 
     protected function response($method, $uri, array $content, array $options, Response $response)

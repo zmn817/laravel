@@ -24,8 +24,8 @@ class WechatTest extends TestCase
         $session = Str::random();
         $wechat = new Wechat(['session' => $session]);
         $wechat->search([
-            'city' => 'Beijing',
-            'query' => 'Web',
+            'city' => '北京',
+            'query' => 'PHP',
             'page' => 1,
         ]);
     }
