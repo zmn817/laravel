@@ -52,12 +52,12 @@ class Request
 
     public function logWhenSuccess()
     {
-        $this->logWhenSuccess = true;
+        $this->shouldLogWhenSuccess = true;
     }
 
     public function doNotLogWhenSuccess()
     {
-        $this->logWhenSuccess = false;
+        $this->shouldLogWhenSuccess = false;
     }
 
     public function request($method, $uri = '', array $content = [], array $options = [])
