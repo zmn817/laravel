@@ -17,8 +17,8 @@ class WechatTest extends TestCase
             'pageNo' => 1,
             'pageSize' => 10,
         ]);
-        var_dump($jobs);
-        $this->assertNotEmpty($jobs);
+
+        $this->assertEquals(10, count($jobs['result']));
     }
 
     public function testJdDetail()

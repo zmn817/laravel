@@ -36,6 +36,11 @@ class Wechat extends Request
         ]];
     }
 
+    protected function contentType($method, $uri, array $content, array $options)
+    {
+        return $method == 'GET' ? 'query' : 'json';
+    }
+
     protected function response($method, $uri, array $content, array $options, Response $response)
     {
         $responseBody = (string) $response->getBody();
