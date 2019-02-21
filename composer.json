@@ -11,7 +11,8 @@
         "laravel/passport": "*",
         "laravel/socialite": "*",
         "mockery/mockery": "*",
-        "phpunit/phpunit": "^7.0"
+        "phpunit/phpunit": "^7.0",
+        "socialiteproviders/manager": "^3.0"
     },
     "autoload": {
         "files": [
