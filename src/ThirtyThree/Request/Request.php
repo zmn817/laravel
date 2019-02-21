@@ -78,6 +78,7 @@ class Request
                     $transferTime = $stats->getTransferTime();
                 },
             ]);
+            $responseBody = (string) $response->getBody();
 
             if ($this->shouldLogWhenSuccess()) {
                 $this->logger()->info('request success', [
@@ -87,12 +88,28 @@ class Request
                     'content' => $content,
                     'options' => $options,
                     'transferTime' => $transferTime,
-                    'response' => (string) $response->getBody(),
+                    'response' => $responseBody,
                     'responseStatus' => $response->getStatusCode(),
                 ]);
             }
 
-            return $this->response($method, $uri, $content, $options, $response, compact('transferTime'));
+            try {
+                return $this->response($method, $uri, $content, $options, $response);
+            } catch (\Throwable $th) {
+                $errorMessage = $th->getMessage();
+                $this->logger->error($errorMessage, [
+                    'method' => $method,
+                    'base_uri' => $this->baseUri(),
+                    'uri' => $uri,
+                    'content' => $content,
+                    'options' => $options,
+                    'transferTime' => $transferTime,
+                    'response' => (string) $responseBody,
+                    'responseStatus' => $response->getStatusCode(),
+                ]);
+
+                throw new RequestException($errorMessage, 500, $response);
+            }
         } catch (RequestException $e) {
             throw $e;
         } catch (BadResponseException $e) {
@@ -145,7 +162,7 @@ class Request
         return [$content, []];
     }
 
-    protected function response($method, $uri, array $content, array $options, Response $response, array $extra = [])
+    protected function response($method, $uri, array $content, array $options, Response $response)
     {
         $responseBody = (string) $response->getBody();
 

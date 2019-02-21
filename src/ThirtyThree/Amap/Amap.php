@@ -4,7 +4,6 @@ namespace ThirtyThree\Amap;
 
 use GuzzleHttp\Psr7\Response;
 use ThirtyThree\Request\Request;
-use ThirtyThree\Exceptions\RequestException;
 
 class Amap extends Request
 {
@@ -32,24 +31,13 @@ class Amap extends Request
         return [$content, []];
     }
 
-    protected function response($method, $uri, array $content, array $options, Response $response, array $extra = [])
+    protected function response($method, $uri, array $content, array $options, Response $response)
     {
         $responseBody = (string) $response->getBody();
         $json = json_decode($responseBody, true);
 
         if (array_get($json, 'status') !== '1') {
-            $errorMessage = array_get($json, 'info', 'Unknown Error');
-            $this->logger->error($errorMessage, [
-                'method' => $method,
-                'base_uri' => $this->baseUri(),
-                'uri' => $uri,
-                'content' => $content,
-                'options' => $options,
-                'transferTime' => array_get($extra, 'transferTime'),
-                'response' => (string) $responseBody,
-            ]);
-
-            throw new RequestException($errorMessage, 500, $json);
+            throw new \Exception(array_get($json, 'info', 'Unknown Error'));
         }
 
         return $json;

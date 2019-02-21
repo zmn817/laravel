@@ -1,44 +1,36 @@
 <?php
 
-namespace ThirtyThree\Boss;
+namespace ThirtyThree\Lagou;
 
+use RuntimeException;
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
 use ThirtyThree\Exceptions\RequestException;
 use GuzzleHttp\Exception\BadResponseException;
 
-class WechatApi
+class Web
 {
     protected $logger;
     protected $apiBasePath;
     protected $config;
-    protected $session;
+    protected $cookie;
 
-    public function __construct($session)
+    public function __construct($cookie)
     {
-        $this->logger = fileLogger('boss', 'wechat-api');
-        $this->apiBasePath = 'https://wxapp.zhipin.com';
-        $this->session = $session;
+        $this->logger = fileLogger('lagou', 'wechat-api');
+        $this->apiBasePath = 'https://www.lagou.com';
+        $this->cookie = $cookie;
     }
 
-    public function condition()
+    public function companyInfo($id)
     {
-        return $this->send('GET', '/bzminiapp/geek/search/condition.json');
-    }
+        $html = $this->send('GET', '/gongsi/'.$id.'.html');
+        preg_match('/<script id="companyInfoData" type="text\/html">(.*)<\/script>/', $html, $matches);
+        if (empty($matches[1])) {
+            throw new RuntimeException('解析公司信息失败');
+        }
 
-    public function jdDetail($id)
-    {
-        return $this->send('GET', '/bzminiapp/geek/job/detail.json?jobId='.$id);
-    }
-
-    public function company($id)
-    {
-        return $this->send('GET', '/bzminiapp/brand/detail.json?brandId='.$id);
-    }
-
-    public function search($search)
-    {
-        return $this->send('GET', '/bzminiapp/geek/search/joblist.json?'.http_build_query($search));
+        return json_decode($matches[1], true);
     }
 
     protected function send($method, $path, $body = null)
@@ -49,8 +41,8 @@ class WechatApi
         $client = new Client();
 
         $headers = [
-            'session' => $this->session,
-            'User-Agent' => null,
+            'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS 12_0_0) AppleWebKit/600.0 (KHTML, like Gecko) Chrome/70.0.0.0 Safari/600.0',
+            'Cookie' => $this->cookie,
         ];
         try {
             $res = $client->request($method, $uri, [
@@ -62,23 +54,8 @@ class WechatApi
             ]);
 
             $responseBody = (string) $res->getBody();
-            $responseStatus = $res->getStatusCode();
-            $json = json_decode($responseBody, true);
 
-            if (array_get($json, 'rescode') !== 1) {
-                $this->logger->error('获取数据错误', [
-                    'method' => $method,
-                    'uri' => $uri,
-                    'body' => $body,
-                    'response' => (string) $responseBody,
-                    'response_status' => $responseStatus,
-                    'transferTime' => $transferTime,
-                ]);
-
-                throw new RequestException('获取数据错误');
-            }
-
-            return array_get($json, 'data');
+            return $responseBody;
         } catch (RequestException $e) {
             throw $e;
         } catch (BadResponseException $e) {
@@ -90,10 +67,10 @@ class WechatApi
             if ($e->hasResponse()) {
                 $response = $e->getResponse();
                 $responseStatus = $response->getStatusCode();
-                $responseBody = (string) $response->getBody();
+                $responseBody = $response->getBody();
                 $json = json_decode($responseBody, true);
 
-                $errorMessage = array_get($json, 'resmsg', '未知错误');
+                $errorMessage = array_get($json, 'error', '未知错误');
             }
 
             $this->logger->error($errorMessage, [

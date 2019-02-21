@@ -2,35 +2,36 @@
 
 namespace ThirtyThree\Lagou;
 
-use RuntimeException;
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
 use ThirtyThree\Exceptions\RequestException;
 use GuzzleHttp\Exception\BadResponseException;
 
-class WebApi
+class Wechat
 {
     protected $logger;
     protected $apiBasePath;
     protected $config;
-    protected $cookie;
 
-    public function __construct($cookie)
+    public function __construct()
     {
         $this->logger = fileLogger('lagou', 'wechat-api');
-        $this->apiBasePath = 'https://www.lagou.com';
-        $this->cookie = $cookie;
+        $this->apiBasePath = 'https://weapp.lagou.com';
     }
 
-    public function companyInfo($id)
+    public function jdDetail($id)
     {
-        $html = $this->send('GET', '/gongsi/'.$id.'.html');
-        preg_match('/<script id="companyInfoData" type="text\/html">(.*)<\/script>/', $html, $matches);
-        if (empty($matches[1])) {
-            throw new RuntimeException('解析公司信息失败');
-        }
+        return $this->send('GET', '/api/job/'.$id);
+    }
 
-        return json_decode($matches[1], true);
+    public function company($id)
+    {
+        return $this->send('GET', '/api/company/'.$id);
+    }
+
+    public function search($search)
+    {
+        return $this->send('POST', '/api/job/search', $search);
     }
 
     protected function send($method, $path, $body = null)
@@ -41,8 +42,8 @@ class WebApi
         $client = new Client();
 
         $headers = [
-            'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS 12_0_0) AppleWebKit/600.0 (KHTML, like Gecko) Chrome/70.0.0.0 Safari/600.0',
-            'Cookie' => $this->cookie,
+            'Referer' => 'https://servicewechat.com/wx7523c9b73699af04/100/page-frame.html',
+            'User-Agent' => null,
         ];
         try {
             $res = $client->request($method, $uri, [
@@ -54,8 +55,23 @@ class WebApi
             ]);
 
             $responseBody = (string) $res->getBody();
+            $responseStatus = $res->getStatusCode();
+            $json = json_decode($responseBody, true);
 
-            return $responseBody;
+            if (array_get($json, 'success') !== true) {
+                $this->logger->error('获取数据错误', [
+                    'method' => $method,
+                    'uri' => $uri,
+                    'body' => $body,
+                    'response' => (string) $responseBody,
+                    'response_status' => $responseStatus,
+                    'transferTime' => $transferTime,
+                ]);
+
+                throw new RequestException('获取数据错误');
+            }
+
+            return array_get($json, 'data');
         } catch (RequestException $e) {
             throw $e;
         } catch (BadResponseException $e) {
