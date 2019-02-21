@@ -60,6 +60,32 @@ class Request
         $this->shouldLogWhenSuccess = false;
     }
 
+    protected function contentType($method, $uri, array $content, array $options)
+    {
+        return $method == 'GET' ? 'query' : 'form_params';
+    }
+
+    protected function content($method, $uri, array $content, array $options)
+    {
+        return [$content, [
+            'X-Request-Id' => app('context')->id(),  // 上下文 ID
+        ]];
+    }
+
+    protected function response($method, $uri, array $content, array $options, Response $response)
+    {
+        $responseBody = (string) $response->getBody();
+
+        return $responseBody;
+    }
+
+    protected function errorMessage($responseBody)
+    {
+        $json = json_decode($responseBody, true);
+
+        return array_get($json, 'error', 'Unknown Error');
+    }
+
     public function request($method, $uri = '', array $content = [], array $options = [])
     {
         $transferTime = null;
@@ -152,31 +178,5 @@ class Request
 
             throw new RequestException($e->getMessage());
         }
-    }
-
-    protected function contentType($method, $uri, array $content, array $options)
-    {
-        return $method == 'GET' ? 'query' : 'form_params';
-    }
-
-    protected function content($method, $uri, array $content, array $options)
-    {
-        return [$content, [
-            'X-Request-Id' => app('context')->id(),  // 上下文 ID
-        ]];
-    }
-
-    protected function response($method, $uri, array $content, array $options, Response $response)
-    {
-        $responseBody = (string) $response->getBody();
-
-        return $responseBody;
-    }
-
-    protected function errorMessage($responseBody)
-    {
-        $json = json_decode($responseBody, true);
-
-        return array_get($json, 'error', 'Unknown Error');
     }
 }
