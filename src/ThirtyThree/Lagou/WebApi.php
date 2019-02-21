@@ -5,7 +5,7 @@ namespace ThirtyThree\Lagou;
 use RuntimeException;
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
-use ThirtyThree\Exceptions\ApiException;
+use ThirtyThree\Exceptions\RequestException;
 use GuzzleHttp\Exception\BadResponseException;
 
 class WebApi
@@ -56,7 +56,7 @@ class WebApi
             $responseBody = (string) $res->getBody();
 
             return $responseBody;
-        } catch (ApiException $e) {
+        } catch (RequestException $e) {
             throw $e;
         } catch (BadResponseException $e) {
             $response = null;
@@ -82,7 +82,7 @@ class WebApi
                 'transferTime' => $transferTime,
             ]);
 
-            throw new ApiException($errorMessage, 500, $response);
+            throw new RequestException($errorMessage, 500, $response);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(),
                 [
@@ -93,7 +93,7 @@ class WebApi
                 ]
             );
 
-            throw new ApiException($e->getMessage());
+            throw new RequestException($e->getMessage());
         }
     }
 }

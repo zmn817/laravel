@@ -4,22 +4,18 @@ namespace ThirtyThree\Amap;
 
 use GuzzleHttp\Psr7\Response;
 use ThirtyThree\Request\Request;
-use ThirtyThree\Exceptions\ApiException;
+use ThirtyThree\Exceptions\RequestException;
 
 class Amap extends Request
 {
-    protected $logger;
-    protected $config;
-    protected $apiBasePath;
-
     public function __construct($config = null)
     {
-        $this->logger = fileLogger('amap', 'api');
-        $this->apiBasePath = 'https://restapi.amap.com';
-        $this->config = $config ?: config('services.amap');
+        $this->setLogger(fileLogger('amap', 'api'));
+        $this->setBaseUri('https://restapi.amap.com');
+        $this->setConfig($config ?: config('services.amap'));
     }
 
-    public function district($params)
+    public function district($params = [])
     {
         return $this->request('GET', '/v3/config/district', $params);
     }
@@ -45,6 +41,7 @@ class Amap extends Request
             $errorMessage = array_get($json, 'info', 'Unknown Error');
             $this->logger->error($errorMessage, [
                 'method' => $method,
+                'base_uri' => $this->baseUri(),
                 'uri' => $uri,
                 'content' => $content,
                 'options' => $options,
@@ -52,7 +49,7 @@ class Amap extends Request
                 'response' => (string) $responseBody,
             ]);
 
-            throw new ApiException($errorMessage, 500, $json);
+            throw new RequestException($errorMessage, 500, $json);
         }
 
         return $json;

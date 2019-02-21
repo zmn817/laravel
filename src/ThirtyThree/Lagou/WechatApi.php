@@ -4,7 +4,7 @@ namespace ThirtyThree\Lagou;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
-use ThirtyThree\Exceptions\ApiException;
+use ThirtyThree\Exceptions\RequestException;
 use GuzzleHttp\Exception\BadResponseException;
 
 class WechatApi
@@ -68,11 +68,11 @@ class WechatApi
                     'transferTime' => $transferTime,
                 ]);
 
-                throw new ApiException('获取数据错误');
+                throw new RequestException('获取数据错误');
             }
 
             return array_get($json, 'data');
-        } catch (ApiException $e) {
+        } catch (RequestException $e) {
             throw $e;
         } catch (BadResponseException $e) {
             $response = null;
@@ -98,7 +98,7 @@ class WechatApi
                 'transferTime' => $transferTime,
             ]);
 
-            throw new ApiException($errorMessage, 500, $response);
+            throw new RequestException($errorMessage, 500, $response);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(),
                 [
@@ -109,7 +109,7 @@ class WechatApi
                 ]
             );
 
-            throw new ApiException($e->getMessage());
+            throw new RequestException($e->getMessage());
         }
     }
 }

@@ -4,7 +4,7 @@ namespace ThirtyThree\Yuntongxun;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
-use ThirtyThree\Exceptions\ApiException;
+use ThirtyThree\Exceptions\RequestException;
 use GuzzleHttp\Exception\BadResponseException;
 
 class Api
@@ -122,7 +122,7 @@ class Api
                     'response' => (string) $responseBody,
                     'transferTime' => $transferTime,
                 ]);
-                throw new ApiException($errorMessage, 500);
+                throw new RequestException($errorMessage, 500);
             }
             $this->logger->info('call api', [
                 'method' => $method,
@@ -132,7 +132,7 @@ class Api
             ]);
 
             return $json;
-        } catch (ApiException $e) {
+        } catch (RequestException $e) {
             throw $e;
         } catch (BadResponseException $e) {
             $response = null;
@@ -155,7 +155,7 @@ class Api
                 'transferTime' => $transferTime,
             ]);
 
-            throw new ApiException($errorMessage, 500, $response);
+            throw new RequestException($errorMessage, 500, $response);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(),
                 [
@@ -164,7 +164,7 @@ class Api
                     'body' => $params,
                     'transferTime' => $transferTime,
                 ]);
-            throw new ApiException($e->getMessage(), 1);
+            throw new RequestException($e->getMessage(), 1);
         }
     }
 

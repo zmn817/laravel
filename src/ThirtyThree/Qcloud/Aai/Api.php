@@ -4,7 +4,7 @@ namespace ThirtyThree\Qcloud\Aai;
 
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
-use ThirtyThree\Exceptions\ApiException;
+use ThirtyThree\Exceptions\RequestException;
 use GuzzleHttp\Exception\BadResponseException;
 
 class Api
@@ -75,7 +75,7 @@ class Api
                     'transferTime' => $transferTime,
                 ]);
 
-                throw new ApiException($errorMessage, 500, $response);
+                throw new RequestException($errorMessage, 500, $response);
             }
             $this->logger->info('call api', [
                 'method' => $method,
@@ -85,7 +85,7 @@ class Api
             ]);
 
             return $json;
-        } catch (ApiException $e) {
+        } catch (RequestException $e) {
             throw $e;
         } catch (BadResponseException $e) {
             $response = null;
@@ -108,7 +108,7 @@ class Api
                 'transferTime' => $transferTime,
             ]);
 
-            throw new ApiException($errorMessage, 500, $response);
+            throw new RequestException($errorMessage, 500, $response);
         } catch (\Exception $e) {
             $this->logger->error($e->getMessage(),
                 [
@@ -119,7 +119,7 @@ class Api
                 ]
             );
 
-            throw new ApiException($e->getMessage());
+            throw new RequestException($e->getMessage());
         }
     }
 

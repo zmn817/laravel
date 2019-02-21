@@ -4,7 +4,7 @@ namespace ThirtyThree\Exceptions;
 
 use Exception;
 
-class ApiException extends Exception
+class RequestException extends Exception
 {
     protected $response = null;
 

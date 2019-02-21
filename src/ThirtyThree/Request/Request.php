@@ -5,19 +5,66 @@ namespace ThirtyThree\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\TransferStats;
-use ThirtyThree\Exceptions\ApiException;
+use ThirtyThree\Exceptions\RequestException;
 use GuzzleHttp\Exception\BadResponseException;
 
 class Request
 {
     protected $logger;
-    protected $apiBasePath;
+    protected $baseUri;
+    protected $config;
+    protected $shouldLogWhenSuccess = false;
 
-    protected function request($method, $uri = '', array $content = [], array $options = [])
+    public function setLogger($logger)
+    {
+        $this->logger = $logger;
+    }
+
+    public function logger()
+    {
+        return $this->logger ?: fileLogger('request', 'common');
+    }
+
+    public function setBaseUri($uri)
+    {
+        $this->baseUri = $uri;
+    }
+
+    public function baseUri()
+    {
+        return $this->baseUri;
+    }
+
+    public function setConfig(array $config = null)
+    {
+        $this->config = $config;
+    }
+
+    public function config($key = null)
+    {
+        return array_get($this->config, $key);
+    }
+
+    public function shouldLogWhenSuccess()
+    {
+        return $this->shouldLogWhenSuccess;
+    }
+
+    public function logWhenSuccess()
+    {
+        $this->logWhenSuccess = true;
+    }
+
+    public function doNotLogWhenSuccess()
+    {
+        $this->logWhenSuccess = false;
+    }
+
+    public function request($method, $uri = '', array $content = [], array $options = [])
     {
         $transferTime = null;
         $client = new Client([
-            'base_uri' => $this->apiBasePath,
+            'base_uri' => $this->baseUri(),
         ]);
 
         $contentType = $this->contentType($method, $uri, $content, $options);
@@ -32,8 +79,21 @@ class Request
                 },
             ]);
 
+            if ($this->shouldLogWhenSuccess()) {
+                $this->logger()->info('request success', [
+                    'method' => $method,
+                    'base_uri' => $this->baseUri(),
+                    'uri' => $uri,
+                    'content' => $content,
+                    'options' => $options,
+                    'transferTime' => $transferTime,
+                    'response' => (string) $response->getBody(),
+                    'responseStatus' => $response->getStatusCode(),
+                ]);
+            }
+
             return $this->response($method, $uri, $content, $options, $response, compact('transferTime'));
-        } catch (ApiException $e) {
+        } catch (RequestException $e) {
             throw $e;
         } catch (BadResponseException $e) {
             $response = null;
@@ -49,27 +109,29 @@ class Request
                 $errorMessage = $this->errorMessage($responseBody);
             }
 
-            $this->logger->error($errorMessage, [
+            $this->logger()->error($errorMessage, [
                 'method' => $method,
+                'base_uri' => $this->baseUri(),
                 'uri' => $uri,
                 'content' => $content,
                 'options' => $options,
                 'transferTime' => $transferTime,
-                'response' => (string) $responseBody,
+                'response' => $responseBody,
                 'responseStatus' => $responseStatus,
             ]);
 
-            throw new ApiException($errorMessage, 500, $response);
+            throw new RequestException($errorMessage, 500, $response);
         } catch (\Exception $e) {
-            $this->logger->error($e->getMessage(), [
+            $this->logger()->error($e->getMessage(), [
                 'method' => $method,
+                'base_uri' => $this->baseUri(),
                 'uri' => $uri,
                 'content' => $content,
                 'options' => $options,
                 'transferTime' => $transferTime,
             ]);
 
-            throw new ApiException($e->getMessage());
+            throw new RequestException($e->getMessage());
         }
     }
 
