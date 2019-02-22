@@ -8,6 +8,8 @@
 /.github export-ignore
 /storage export-ignore
 /tests export-ignore
+artisan export-ignore
 CHANGELOG-* export-ignore
 CONTRIBUTING.md export-ignore
 phpunit.xml.dist export-ignore
+test export-ignore
