@@ -75,4 +75,11 @@ class RequestTest extends TestCase
         $this->assertInstanceOf(RequestException::class, $exception);
         $this->assertInstanceOf(Response::class, $exception->getResponse());
     }
+
+    public function testFinnalException()
+    {
+        $this->expectException(RequestException::class);
+        $request = new Request();
+        $request->request('GET', 'abc://xxx');
+    }
 }
