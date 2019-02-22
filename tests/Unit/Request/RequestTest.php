@@ -3,9 +3,9 @@
 namespace ThirtyThree\Tests\Unit\Reqeust;
 
 use Monolog\Logger;
+use Tests\TestCase;
 use Illuminate\Support\Str;
 use GuzzleHttp\Psr7\Response;
-use ThirtyThree\Tests\TestCase;
 use ThirtyThree\Request\Request;
 use ThirtyThree\Exceptions\RequestException;
 

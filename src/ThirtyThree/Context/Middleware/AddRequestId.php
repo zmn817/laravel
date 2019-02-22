@@ -16,8 +16,10 @@ class AddRequestId
      */
     public function handle($request, Closure $next)
     {
-        header('X-Request-Id: '.app('context')->id());
+        $response = $next($request);
 
-        return $next($request);
+        $response->headers->set('X-Request-Id', app('context')->id());
+
+        return $response;
     }
 }

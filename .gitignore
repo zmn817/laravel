@@ -4,7 +4,6 @@
 /.vscode
 /build
 /phpunit.xml
-/storage
 /vendor
 composer.lock
 composer.phar

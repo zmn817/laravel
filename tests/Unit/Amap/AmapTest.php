@@ -3,7 +3,7 @@
 namespace ThirtyThree\Tests\Unit\Reqeust;
 
 use ThirtyThree\Amap\Amap;
-use ThirtyThree\Tests\TestCase;
+use Tests\TestCase;
 use ThirtyThree\Exceptions\RequestException;
 
 class AmapTest extends TestCase

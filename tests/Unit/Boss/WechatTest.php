@@ -4,7 +4,7 @@ namespace ThirtyThree\Tests\Unit\Boss;
 
 use Illuminate\Support\Str;
 use ThirtyThree\Boss\Wechat;
-use ThirtyThree\Tests\TestCase;
+use Tests\TestCase;
 use ThirtyThree\Exceptions\RequestException;
 
 class WechatTest extends TestCase

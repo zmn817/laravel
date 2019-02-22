@@ -3,7 +3,7 @@
 namespace ThirtyThree\Tests\Unit\Lagou;
 
 use ThirtyThree\Lagou\Web;
-use ThirtyThree\Tests\TestCase;
+use Tests\TestCase;
 
 class WebTest extends TestCase
 {
