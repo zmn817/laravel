@@ -22,7 +22,7 @@ before_install:
 
 install:
   - travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest
-  - cp ./laravel/.env.travis ./laravel/.env.travis
+  - cp ./laravel/.env.travis ./laravel/.env
   - ./laravel/artisan key:generate
   - ./laravel/artisan migrate
   - ./laravel/artisan db:seed --class='ThirtyThree\Tests\Database\Seeds\DatabaseSeeder'
