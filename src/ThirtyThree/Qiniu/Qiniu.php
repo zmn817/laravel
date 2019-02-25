@@ -8,11 +8,11 @@ use RuntimeException;
 use App\Models\UploadFile;
 use App\Models\FileQiniuFop;
 use InvalidArgumentException;
-use App\Models\FileQiniuBucket;
 use Qiniu\Storage\BucketManager;
 use Qiniu\Storage\UploadManager;
 use Qiniu\Processing\PersistentFop;
 use GuzzleHttp\Client as GuzzleClient;
+use ThirtyThree\Qiniu\Models\FileQiniuBucket;
 
 class Qiniu
 {

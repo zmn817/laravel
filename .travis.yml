@@ -11,7 +11,17 @@ cache:
   directories:
     - $HOME/.composer/cache
 
+services:
+  - redis-server
+  - mysql
+
+before_install:
+  - travis_retry composer self-update
+  - mysql -e 'CREATE DATABASE forge;'
+
 install:
   - travis_retry composer update --prefer-dist --no-interaction --prefer-stable --no-suggest
+  - ./laravel/artisan migrate
+  - ./laravel/artisan db:seed --class='ThirtyThree\Tests\Database\Seeds\DatabaseSeeder'
 
-script: ./vendor/bin/phpunit --coverage-text --coverage-clover ./build/clover.xml
+script: ./vendor/bin/phpunit --coverage-text

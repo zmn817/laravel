@@ -5,8 +5,8 @@ namespace ThirtyThree\Qiniu;
 use Qiniu\Auth;
 use Qiniu\Config;
 use GuzzleHttp\Psr7\Request;
-use App\Models\FileQiniuBucket;
 use GuzzleHttp\Client as GuzzleClient;
+use ThirtyThree\Qiniu\Models\FileQiniuBucket;
 
 class Client
 {

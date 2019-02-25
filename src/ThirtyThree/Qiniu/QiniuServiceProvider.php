@@ -11,6 +11,8 @@ class QiniuServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerQiniu();
+
+        $this->loadMigrationsFrom(__DIR__.'/migrations');
     }
 
     private function registerQiniu()

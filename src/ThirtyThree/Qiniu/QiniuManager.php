@@ -4,7 +4,7 @@ namespace ThirtyThree\Qiniu;
 
 use Qiniu as Q;
 use RuntimeException;
-use App\Models\FileQiniuBucket;
+use ThirtyThree\Qiniu\Models\FileQiniuBucket;
 
 class QiniuManager
 {

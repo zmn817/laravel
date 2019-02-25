@@ -11,6 +11,8 @@ class StorageServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerStorage();
+
+        $this->loadMigrationsFrom(__DIR__.'/migrations');
     }
 
     private function registerStorage()
