@@ -42,4 +42,10 @@ return [
     'amap' => [
         'key' => env('AMAP_KEY'),
     ],
+
+    'tapd' => [
+        'company' => env('TAPD_COMPANY'),
+        'username' => env('TAPD_USERNAME'),
+        'password' => env('TAPD_PASSWORD'),
+    ],
 ];

@@ -44,12 +44,7 @@ class Wechat extends Request
     protected function response($method, $uri, array $content, array $options, Response $response)
     {
         $responseBody = (string) $response->getBody();
-
         $json = json_decode($responseBody, true);
-
-        if (array_get($json, 'success') !== true) {
-            throw new \Exception(array_get($json, 'error', 'Unknown Error'));
-        }
 
         return array_get($json, 'data');
     }
