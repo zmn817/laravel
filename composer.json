@@ -43,13 +43,15 @@
     "extra": {
         "laravel": {
             "aliases": {
+                "Sms": "ThirtyThree\\Support\\Facades\\Sms",
                 "Qiniu": "ThirtyThree\\Support\\Facades\\Qiniu",
                 "TimStorage": "ThirtyThree\\Support\\Facades\\Storage"
             },
             "providers": [
+                "ThirtyThree\\Context\\ContextServiceProvider",
                 "ThirtyThree\\Qiniu\\QiniuServiceProvider",
-                "ThirtyThree\\Storage\\StorageServiceProvider",
-                "ThirtyThree\\Context\\ContextServiceProvider"
+                "ThirtyThree\\Sms\\SmsServiceProvider",
+                "ThirtyThree\\Storage\\StorageServiceProvider"
             ]
         }
     },
