@@ -224,6 +224,8 @@ return [
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
 
+        'Sms' => ThirtyThree\Support\Facades\Sms::class,
+        'SmsEasy' => ThirtyThree\Support\Facades\SmsEasy::class,
         'Qiniu' => ThirtyThree\Support\Facades\Qiniu::class,
         'TimStorage' => ThirtyThree\Support\Facades\Storage::class,
     ],

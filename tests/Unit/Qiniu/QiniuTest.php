@@ -16,7 +16,7 @@ class QiniuTest extends TestCase
     public function testEmptyQiniuBucket()
     {
         $this->expectException(RuntimeException::class);
-        $default = Qiniu::bucket();
+        Qiniu::bucket();
     }
 
     public function testDefaultBucket()
@@ -26,11 +26,26 @@ class QiniuTest extends TestCase
             'name' => 'default',
             'bucket' => 'default',
             'domain' => 'http://example.com',
-            'visibility' => 'private',
+            'visibility' => 'public',
             'access_key' => 'xxx',
             'secret_key' => 'xxx',
         ]);
         $default = Qiniu::bucket();
         $this->assertInstanceOf(RealQiniu::class, $default);
+
+        $default2 = Qiniu::bucket();
+        $url = $default2->url('test.txt');
+        $this->assertEquals('http://example.com/test.txt', $url);
+    }
+
+    public function testUriEncode()
+    {
+        $this->assertEquals('c3ViamVjdHM_X2Q9MQ==', Qiniu::uriEncode('subjects?_d=1'));
+    }
+
+    public function testPFopStatus()
+    {
+        $this->expectException(\GuzzleHttp\Exception\RequestException::class);
+        $res = Qiniu::PFopStatus('mock_id');
     }
 }

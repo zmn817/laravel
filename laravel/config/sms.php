@@ -11,17 +11,13 @@ return [
 
         // 默认可用的发送网关
         'gateways' => [
-            'submail',
+            'errorlog',
         ],
     ],
     // 可用的网关配置
     'gateways' => [
         'errorlog' => [
             'file' => storage_path('logs/sms.log'),
-        ],
-        'submail' => [
-            'app_id' => '31838',
-            'app_key' => '172f6c5d47c60f8d7bd99a254424cc71',
         ],
     ],
 ];

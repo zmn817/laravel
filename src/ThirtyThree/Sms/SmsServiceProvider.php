@@ -2,6 +2,7 @@
 
 namespace ThirtyThree\Sms;
 
+use Overtrue\EasySms\EasySms;
 use Illuminate\Support\ServiceProvider;
 
 class SmsServiceProvider extends ServiceProvider
@@ -18,14 +19,16 @@ class SmsServiceProvider extends ServiceProvider
     public function register()
     {
         $this->registerSms();
-
-        $this->loadMigrationsFrom(__DIR__.'/migrations');
     }
 
     private function registerSms()
     {
-        $this->app->singleton('sms', function ($app) {
-            return new Sms($app['config']->get('sms'));
+        $this->app->singleton('sms', function () {
+            return new SmsManager();
+        });
+
+        $this->app->singleton('sms.easy', function ($app) {
+            return new EasySms($app['config']->get('sms'));
         });
     }
 }

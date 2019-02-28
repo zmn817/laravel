@@ -39,7 +39,7 @@ class QiniuManager
      */
     public function PFopStatus($id)
     {
-        $client = new Client();
+        $client = new \GuzzleHttp\Client();
         $response = $client->get('https://api.qiniu.com/status/get/prefop?id='.$id);
         $json = json_decode($response->getBody(), true);
 
@@ -76,10 +76,5 @@ class QiniuManager
     protected function resolve($slug)
     {
         return new Qiniu($slug);
-    }
-
-    public function __call($method, $parameters)
-    {
-        return $this->bucket()->$method(...$parameters);
     }
 }
