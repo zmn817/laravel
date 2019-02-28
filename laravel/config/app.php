@@ -166,16 +166,16 @@ return [
         ThirtyThree\Context\ContextServiceProvider::class,
         ThirtyThree\Qiniu\QiniuServiceProvider::class,
         ThirtyThree\Storage\StorageServiceProvider::class,
-        ThirtyThree\Context\ContextServiceProvider::class,
+        ThirtyThree\Sms\SmsServiceProvider::class,
 
         /*
          * Application Service Providers...
          */
-        App\Providers\AppServiceProvider::class,
-        App\Providers\AuthServiceProvider::class,
-        // App\Providers\BroadcastServiceProvider::class,
-        App\Providers\EventServiceProvider::class,
-        App\Providers\RouteServiceProvider::class,
+        TestApp\Providers\AppServiceProvider::class,
+        TestApp\Providers\AuthServiceProvider::class,
+        // TestApp\Providers\BroadcastServiceProvider::class,
+        TestApp\Providers\EventServiceProvider::class,
+        TestApp\Providers\RouteServiceProvider::class,
     ],
 
     /*
