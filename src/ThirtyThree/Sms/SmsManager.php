@@ -2,8 +2,6 @@
 
 namespace ThirtyThree\Sms;
 
-use Cache;
-use Carbon\Carbon;
 use RuntimeException;
 use Overtrue\EasySms\PhoneNumber;
 use Illuminate\Database\Eloquent\Model;
@@ -16,25 +14,6 @@ class SmsManager
     {
         $to = $this->format($to);
         $to = new PhoneNumber($to['phone_number'], $to['country_code']);
-
-        // 1分钟内限制发送短信1次
-        $checkKey = 'sms_send_'.json_encode($to);
-        if (Cache::has($checkKey)) {
-            throw new RuntimeException('超过短信发送频率限制');
-        }
-        $expiresAt = Carbon::now()->addSeconds(55);
-        Cache::put($checkKey, $expiresAt, $expiresAt);
-
-        $job = new SmsMessageSend($to, $message, $providers);
-
-        return dispatch($job);
-    }
-
-    public function forceSend($to, $message, $providers = [])
-    {
-        $to = $this->format($to);
-        $to = new PhoneNumber($to['phone_number'], $to['country_code']);
-
         $job = new SmsMessageSend($to, $message, $providers);
 
         return dispatch($job);
