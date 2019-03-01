@@ -38,7 +38,7 @@ class SmsManager
             $number = $phoneUtil->parse($to, 'CN');
             $country_code = $number->getCountryCode();
             $fullNumber = $phoneUtil->format($number, \libphonenumber\PhoneNumberFormat::E164);
-            $phone_number = substr($fullNumber, count($country_code) + 2);
+            $phone_number = substr($fullNumber, mb_strlen($country_code) + 1);
         } else {
             throw new RuntimeException('Unsupport format of the phone to send');
         }
