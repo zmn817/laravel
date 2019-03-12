@@ -14,7 +14,7 @@ class TestCase extends BaseTest
         return new BadResponseException(
             '',
             new Request('GET', 'https://example.com'),
-            new Response(500, [], $responseBody ?: json_encode(['error' => 'mock error message'])),
+            new Response(500, [], $responseBody ?: json_encode(['error' => 'mock error message']))
         );
     }
 }
