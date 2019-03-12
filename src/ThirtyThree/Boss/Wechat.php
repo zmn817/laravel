@@ -16,22 +16,22 @@ class Wechat extends Request
 
     public function condition()
     {
-        return $this->request('GET', '/bzminiapp/geek/search/condition.json');
+        return $this->request('GET', 'bzminiapp/geek/search/condition.json');
     }
 
     public function jdDetail($id)
     {
-        return $this->request('GET', '/bzminiapp/geek/job/detail.json?jobId='.$id);
+        return $this->request('GET', 'bzminiapp/geek/job/detail.json?jobId='.$id);
     }
 
     public function company($id)
     {
-        return $this->request('GET', '/bzminiapp/brand/detail.json?brandId='.$id);
+        return $this->request('GET', 'bzminiapp/brand/detail.json?brandId='.$id);
     }
 
     public function search($search)
     {
-        return $this->request('GET', '/bzminiapp/geek/search/joblist.json?'.http_build_query($search));
+        return $this->request('GET', 'bzminiapp/geek/search/joblist.json?'.http_build_query($search));
     }
 
     protected function content($method, $uri, array $content, array $options)

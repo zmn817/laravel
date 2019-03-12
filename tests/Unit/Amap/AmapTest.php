@@ -2,42 +2,62 @@
 
 namespace ThirtyThree\Tests\Unit\Reqeust;
 
+use Mockery;
+use GuzzleHttp\Client;
 use ThirtyThree\Amap\Amap;
-use Tests\TestCase;
+use GuzzleHttp\Psr7\Response;
+use ThirtyThree\Tests\TestCase;
 use ThirtyThree\Exceptions\RequestException;
 
 class AmapTest extends TestCase
 {
-    public function testEmptyConfig()
+    public function testRequestException()
     {
-        $this->expectException(RequestException::class);
+        try {
+            $tapd = new Amap();
+            $client = Mockery::mock(Client::class);
+            $tapd->setClient($client);
+            $responseJson = ['status' => '0', 'info' => 'INVALID_USER_KEY', 'infocode' => '10001'];
+            $client->shouldReceive('request')
+                ->with('GET', 'v3/config/district', Mockery::any())
+                ->once()
+                ->andReturn(new Response(200, [], json_encode($responseJson)));
 
-        $amap = new Amap();
-        $amap->setConfig(null);
-        $amap->district([]);
+            $tapd->district([]);
+        } catch (RequestException $e) {
+            $this->assertEquals($responseJson['info'], $e->getMessage());
+        }
     }
 
-    public function testDistrict()
+    public function testDistrictApi()
     {
-        $amap = new Amap();
-        $districts = $amap->district();
-        $this->assertArrayHasKey('districts', $districts);
+        $tapd = new Amap();
+        $client = Mockery::mock(Client::class);
+        $tapd->setClient($client);
+        $responseJson = ['status' => '1', 'data' => 'mock result'];
+        $client->shouldReceive('request')
+            ->with('GET', 'v3/config/district', Mockery::any())
+            ->once()
+            ->andReturns(new Response(200, [], json_encode($responseJson)));
+
+        $result = $tapd->district([]);
+
+        $this->assertEquals($responseJson, $result);
     }
 
-    public function testSubDistrict()
+    public function testGeoApi()
     {
-        $amap = new Amap();
-        $parent = $amap->district();
-        $code = $parent['districts'][0]['districts'][0]['adcode'];
-        $name = $parent['districts'][0]['districts'][0]['name'];
-        $districts = $amap->district(['keywords' => $code, 'filter' => $code]);
-        $this->assertEquals($name, $districts['districts'][0]['name']);
-    }
+        $tapd = new Amap();
+        $client = Mockery::mock(Client::class);
+        $tapd->setClient($client);
+        $responseJson = ['status' => '1', 'data' => 'mock result'];
+        $client->shouldReceive('request')
+            ->with('GET', 'v3/geocode/geo', Mockery::any())
+            ->once()
+            ->andReturns(new Response(200, [], json_encode($responseJson)));
 
-    public function testGeo()
-    {
-        $amap = new Amap();
-        $info = $amap->geo('北京天安门');
-        $this->assertArrayHasKey('geocodes', $info);
+        $result = $tapd->geo([]);
+
+        $this->assertEquals($responseJson, $result);
     }
 }

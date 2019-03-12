@@ -3,7 +3,7 @@
 namespace ThirtyThree\Tests\Unit\Lagou;
 
 use ThirtyThree\Lagou\Wechat;
-use Tests\TestCase;
+use ThirtyThree\Tests\TestCase;
 
 class WechatTest extends TestCase
 {

@@ -4,7 +4,7 @@ namespace ThirtyThree\Tests\Unit\Sms;
 
 use Sms;
 use Cache;
-use Tests\TestCase;
+use ThirtyThree\Tests\TestCase;
 
 class SmsSendTest extends TestCase
 {

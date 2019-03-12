@@ -5,6 +5,7 @@ namespace ThirtyThree\Request;
 use GuzzleHttp\Client;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\TransferStats;
+use GuzzleHttp\ClientInterface;
 use ThirtyThree\Exceptions\RequestException;
 use GuzzleHttp\Exception\BadResponseException;
 
@@ -13,6 +14,7 @@ class Request
     protected $logger;
     protected $baseUri;
     protected $config;
+    protected $client;
     protected $shouldLogWhenSuccess = false;
 
     public function setLogger($logger)
@@ -43,6 +45,25 @@ class Request
     public function config($key = null)
     {
         return array_get($this->config, $key);
+    }
+
+    public function client()
+    {
+        if (! is_null($this->client)) {
+            return $this->client;
+        }
+
+        $client = new Client([
+            'base_uri' => $this->baseUri(),
+        ]);
+        $this->client = $client;
+
+        return $client;
+    }
+
+    public function setClient(ClientInterface $client)
+    {
+        $this->client = $client;
     }
 
     public function shouldLogWhenSuccess()
@@ -89,9 +110,7 @@ class Request
     public function request($method, $uri = '', array $content = [], array $options = [])
     {
         $transferTime = null;
-        $client = new Client([
-            'base_uri' => $this->baseUri(),
-        ]);
+        $client = $this->client();
 
         $contentType = $this->contentType($method, $uri, $content, $options);
         list($content, $headers) = $this->content($method, $uri, $content, $options);

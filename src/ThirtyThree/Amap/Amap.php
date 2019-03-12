@@ -16,12 +16,12 @@ class Amap extends Request
 
     public function district($params = [])
     {
-        return $this->request('GET', '/v3/config/district', $params);
+        return $this->request('GET', 'v3/config/district', $params);
     }
 
     public function geo($address)
     {
-        return $this->request('GET', '/v3/geocode/geo', ['address' => $address]);
+        return $this->request('GET', 'v3/geocode/geo', ['address' => $address]);
     }
 
     protected function content($method, $uri, array $content, array $options)

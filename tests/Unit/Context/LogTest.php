@@ -2,7 +2,7 @@
 
 namespace ThirtyThree\Tests\Feature\Unit;
 
-use Tests\TestCase;
+use ThirtyThree\Tests\TestCase;
 
 class LogTest extends TestCase
 {

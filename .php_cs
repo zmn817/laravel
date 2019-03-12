@@ -16,6 +16,7 @@ return PhpCsFixer\Config::create()
     ->setFinder(
         PhpCsFixer\Finder::create()
             ->exclude([
+                'laravel',
                 'bootstrap/cache',
                 'node_modules',
                 'storage',

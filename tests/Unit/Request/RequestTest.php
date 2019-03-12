@@ -2,10 +2,12 @@
 
 namespace ThirtyThree\Tests\Unit\Reqeust;
 
+use Mockery;
 use Monolog\Logger;
-use Tests\TestCase;
+use GuzzleHttp\Client;
 use Illuminate\Support\Str;
 use GuzzleHttp\Psr7\Response;
+use ThirtyThree\Tests\TestCase;
 use ThirtyThree\Request\Request;
 use ThirtyThree\Exceptions\RequestException;
 
@@ -43,6 +45,10 @@ class RequestTest extends TestCase
     public function testLogRequestWhenSuccess()
     {
         $request = new Request();
+        $client = Mockery::mock(Client::class);
+        $client->allows()->request('GET', 'https://example.com', Mockery::type('array'))->andReturn(new Response(200, [], 'mock-response'));
+        $request->setClient($client);
+
         $request->logWhenSuccess();
 
         $path = Str::random();
@@ -52,12 +58,12 @@ class RequestTest extends TestCase
         $path = 'logs/'.trim($path).'/';
         $name = $name.'-'.date('Y-m-d');
 
-        $request->request('GET', 'https://httpbin.org/get');
+        $request->request('GET', 'https://example.com');
         $content = file_get_contents(storage_path($path.$name.'.log'));
         $this->assertNotEmpty($content);
 
         $request->doNotLogWhenSuccess();
-        $request->request('GET', 'https://httpbin.org/get');
+        $request->request('GET', 'https://example.com');
         $same = file_get_contents(storage_path($path.$name.'.log'));
         $this->assertEquals($content, $same);
     }
@@ -66,8 +72,14 @@ class RequestTest extends TestCase
     {
         $exception = null;
         $request = new Request();
+        $client = Mockery::mock(Client::class);
+        $client->allows()
+            ->request('POST', 'https://example.com', Mockery::type('array'))
+            ->andThrow($this->badResponseException('bad-response'));
+        $request->setClient($client);
+
         try {
-            $request->request('POST', 'https://httpbin.org/get');
+            $res = $request->request('POST', 'https://example.com');
         } catch (\Throwable $e) {
             $exception = $e;
         }

@@ -4,8 +4,8 @@ namespace ThirtyThree\Tests\Unit\Sms;
 
 use Sms;
 use TestApp\User;
-use Tests\TestCase;
 use RuntimeException;
+use ThirtyThree\Tests\TestCase;
 use Overtrue\EasySms\PhoneNumber;
 
 class SmsFormatTest extends TestCase
