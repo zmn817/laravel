@@ -27,4 +27,4 @@ install:
   - ./laravel/artisan migrate
   - ./laravel/artisan db:seed --class='ThirtyThree\Tests\Database\Seeds\DatabaseSeeder'
 
-script: ./vendor/bin/phpunit --coverage-text
+script: ./vendor/bin/phpunit --verbose --coverage-text
