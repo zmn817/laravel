@@ -9,6 +9,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Overtrue\EasySms\Contracts\PhoneNumberInterface;
+use Overtrue\EasySms\Exceptions\NoGatewayAvailableException;
 
 class SmsMessageSend implements ShouldQueue
 {
@@ -27,7 +28,22 @@ class SmsMessageSend implements ShouldQueue
 
     public function handle()
     {
-        SmsEasy::send($this->to, $this->message, $this->gateways);
+        try {
+            SmsEasy::send($this->to, $this->message, $this->gateways);
+        } catch (NoGatewayAvailableException $e) {
+            $exceptions = $e->getExceptions();
+            foreach ($exceptions as $channel => $exception) {
+                \Log::error(sprintf(
+                        "短信发送失败 %s %s\n%s",
+                        $channel,
+                        $exception->getMessage(),
+                        $exception->getTraceAsString()
+                    )
+                );
+            }
+
+            throw $e;
+        }
     }
 
     public function tags()
