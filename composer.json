@@ -3,14 +3,14 @@
     "require": {
         "guzzlehttp/guzzle": "^6.3",
         "overtrue/easy-sms": "^1.1",
-        "overtrue/wechat": "^4.1",
+        "overtrue/wechat": "^5.1",
         "propaganistas/laravel-phone": "^4.1",
         "qiniu/php-sdk": "^7.2",
         "ramsey/uuid": "^3.8"
     },
     "require-dev": {
         "fideloper/proxy": "^4.0",
-        "laravel/framework": "5.8.*",
+        "laravel/framework": "8.0.*",
         "laravel/tinker": "^1.0",
 
         "beyondcode/laravel-dump-server": "^1.0",
