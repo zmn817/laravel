@@ -6,7 +6,7 @@
         "overtrue/wechat": "^5.1",
         "propaganistas/laravel-phone": "^4.1",
         "qiniu/php-sdk": "^7.2",
-        "ramsey/uuid": "^3.8"
+        "ramsey/uuid": "^4.0"
     },
     "require-dev": {
         "fideloper/proxy": "^4.0",
