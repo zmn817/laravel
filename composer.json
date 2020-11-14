@@ -1,7 +1,7 @@
 {
     "name": "timjuly/laravel",
     "require": {
-        "guzzlehttp/guzzle": "^6.3",
+        "guzzlehttp/guzzle": "^7.2",
         "overtrue/easy-sms": "^1.1",
         "overtrue/wechat": "^5.1",
         "propaganistas/laravel-phone": "^4.1",
